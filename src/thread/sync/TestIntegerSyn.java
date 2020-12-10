@@ -6,6 +6,14 @@ package thread.sync;
 public class TestIntegerSyn {
 
     public static void main(String[] args) throws InterruptedException {
+        //        Object obj = new Object();
+//        /**
+//         * identityHashCode
+//         * 无论给定对象的类是否覆盖hashCode()，为给定对象返回与默认方法hashCode()返回的哈希代码相同的哈希代码。空引用的哈希码为零。默认hashCode()即Object的hashCode()。
+//         */
+//        System.out.println("identityHashCode = " + System.identityHashCode(obj));
+//        System.out.println("hashCode = " + obj.hashCode());
+
         Worker worker = new Worker(0);
 
         for (int j = 0; j < 5; j++) {

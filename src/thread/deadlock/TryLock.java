@@ -4,6 +4,9 @@ import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * 使用尝试拿锁的机制打破死锁
+ */
 public class TryLock {
 
     /**
@@ -25,20 +28,26 @@ public class TryLock {
         Random random = new Random();
         while (true) {
             if (NO_1.tryLock()) {
-                System.out.println(name + " get NO_1.");
-                if (NO_2.tryLock()) {
-                    System.out.println(name + " get NO_2，Project is running.");
-                    System.out.println("A week later, the project was completed.");
+                Thread.sleep(random.nextInt(3));
+                System.out.println(name + " get NO_1");
+                try {
+                    if (NO_2.tryLock()) {
+                        try {
+                            System.out.println(name + " get NO_2，Project is running.");
+                            System.out.println("A week later, the project was completed.");
+                            break;
+                        } finally {
+                            NO_2.unlock();
+                            System.out.println("张总释放NO_2");
+                        }
+                    }
+                } finally {
                     NO_1.unlock();
-                    NO_2.unlock();
-                    break;
-                } else {
-                    NO_1.unlock();
+                    System.out.println("张总释放NO_1");
                 }
             }
-            Thread.sleep(random.nextInt() * 3);
+            Thread.sleep(random.nextInt(3));
         }
-
     }
 
     /**
@@ -51,18 +60,25 @@ public class TryLock {
         Random random = new Random();
         while (true) {
             if (NO_1.tryLock()) {
+                Thread.sleep(random.nextInt(3));
                 System.out.println(name + " get NO_1");
-                if (NO_2.tryLock()) {
-                    System.out.println(name + " get NO_2，Project is running.");
-                    System.out.println("A week later, the project was completed.");
+                try {
+                    if (NO_2.tryLock()) {
+                        try {
+                            System.out.println(name + " get NO_2，Project is running.");
+                            System.out.println("A week later, the project was completed.");
+                            break;
+                        } finally {
+                            NO_2.unlock();
+                            System.out.println("赵总释放NO_2");
+                        }
+                    }
+                } finally {
                     NO_1.unlock();
-                    NO_2.unlock();
-                    break;
-                } else {
-                    NO_1.unlock();
+                    System.out.println("赵总释放NO_1");
                 }
             }
-            Thread.sleep(random.nextInt() * 3);
+            Thread.sleep(random.nextInt(3));
         }
     }
 
