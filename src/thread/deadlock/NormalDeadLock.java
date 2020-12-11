@@ -19,10 +19,12 @@ public class NormalDeadLock {
     /**
      * 张总跟前端一号技师关系好，所以他先跟前端一号技师打招呼，先去抢No1，再去抢No2
      */
-    private static void zhangDo() {
+    private static void zhangDo() throws InterruptedException {
         String threadName = Thread.currentThread().getName();
         synchronized (NO_1) {
             System.out.println(threadName + " get No1");
+            /*这里加睡眠时间，是为了防止线程一运行就获得两个对象的锁*/
+            Thread.sleep(100);
             synchronized (NO_2) {
                 System.out.println(threadName + " get No2");
             }
@@ -36,7 +38,7 @@ public class NormalDeadLock {
         String threadName = Thread.currentThread().getName();
         synchronized (NO_2) {
             System.out.println(threadName + " get No2");
-            /*主线程先会被执行，这里加睡眠时间，是为了防止线程一运行就获得两个对象的锁*/
+            /*这里加睡眠时间，是为了防止线程一运行就获得两个对象的锁*/
             Thread.sleep(100);
             synchronized (NO_1) {
                 System.out.println(threadName + " get No1");
