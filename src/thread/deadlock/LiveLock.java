@@ -1,13 +1,16 @@
 package thread.deadlock;
 
+import java.util.Random;
+
 /**
  * ======================================================================================
  * 活锁例子
- * 创建一个勺子类，有且只有一个。
+ * 创建一个勺子类，有且只有一个勺子的实例。
  * 丈夫和妻子用餐时，需要使用勺子，这时只能有一人持有，也就是说同一时刻只有一个人能够进餐。
  * 但是丈夫和妻子互相谦让，都想让对方先吃，所以勺子一直传递来传递去，谁都没法用餐。
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  */
+@SuppressWarnings("all")
 public class LiveLock {
 
     /**
@@ -20,7 +23,7 @@ public class LiveLock {
         /**
          * 获取勺子拥有者
          */
-        public String getOwnerName() {
+        String getOwnerName() {
             return owner.getName();
         }
 
@@ -29,18 +32,18 @@ public class LiveLock {
          *
          * @param diner 晚餐实例对象，也就是勺子的拥有者
          */
-        public void setOwner(Diner diner) {
+        void setOwner(Diner diner) {
             this.owner = diner;
         }
 
-        public Spoon(Diner diner) {
+        Spoon(Diner diner) {
             this.owner = diner;
         }
 
         /**
          * 表示正在用餐
          */
-        public void use() {
+        void use() {
             System.out.println(owner.getName() + " use this spoon and finish eat.");
         }
     }
@@ -49,7 +52,7 @@ public class LiveLock {
      * 晚餐类
      */
     static class Diner {
-        public Diner(boolean isHungry, String name) {
+        Diner(boolean isHungry, String name) {
             this.isHungry = isHungry;
             this.name = name;
         }
@@ -74,7 +77,7 @@ public class LiveLock {
          * @param spouse      共餐对象
          * @param sharedSpoon 勺子对象实例，可以通过该实例获取勺子拥有者
          */
-        public void eatWith(Diner spouse, Spoon sharedSpoon) {
+        void eatWith(Diner spouse, Spoon sharedSpoon) {
             try {
                 synchronized (sharedSpoon) {
                     while (isHungry) {
@@ -89,6 +92,7 @@ public class LiveLock {
                             sharedSpoon.notifyAll();
                         } else {
                             //用餐
+                            System.out.println("用餐中---------------");
                             sharedSpoon.use();
                             sharedSpoon.setOwner(spouse);
                             isHungry = false;
@@ -102,7 +106,6 @@ public class LiveLock {
         }
     }
 
-    @SuppressWarnings("all")
     public static void main(String[] args) {
         /*创建一个丈夫用餐类*/
         final Diner husband = new Diner(true, "husband");
@@ -115,8 +118,13 @@ public class LiveLock {
         Thread h = new Thread() {
             @Override
             public void run() {
-                /*表示和妻子用餐，这个过程判断妻子是否饿了，如果是，则会把勺子分给妻子，并通知她*/
-                husband.eatWith(wife, sharedSpoon);
+                try {
+                    Thread.sleep(new Random().nextInt(6));
+                    /*表示和妻子用餐，这个过程判断妻子是否饿了，如果是，则会把勺子分给妻子，并通知她*/
+                    husband.eatWith(wife, sharedSpoon);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         };
         h.start();
@@ -125,17 +133,22 @@ public class LiveLock {
         Thread w = new Thread() {
             @Override
             public void run() {
-                /*表示和妻子用餐，这个过程判断丈夫是否饿了，如果是，则会把勺子分给丈夫，并通知他*/
-                wife.eatWith(husband, sharedSpoon);
+                try {
+                    Thread.sleep(new Random().nextInt(6));
+                    /*表示和妻子用餐，这个过程判断丈夫是否饿了，如果是，则会把勺子分给丈夫，并通知他*/
+                    wife.eatWith(husband, sharedSpoon);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         };
         w.start();
 
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         h.interrupt();
         w.interrupt();
 
