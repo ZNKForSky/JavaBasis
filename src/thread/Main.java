@@ -31,9 +31,9 @@ public class Main {
          *  =========================================================================
          *  实现线程的方式有两种：
          */
-        //  ======方式一：继承Thread类 ------ Thread是Java对线程的抽象
+        /*======方式一：继承Thread类 ------ Thread是Java对线程的抽象*/
         new MyThread().start();
-        //  ======方式二：实现Runable接口 ------ Runable是Java对任务（业务逻辑）的抽象
+        /*======方式二：实现Runable接口 ------ Runable是Java对任务（业务逻辑）的抽象*/
         new Thread(new RunnableImpl()).start();
         //FutureTask--->RunnableFuture--->Runnable
         FutureTask<String> stringFutureTask = new FutureTask<>(new Callable<String>() {
