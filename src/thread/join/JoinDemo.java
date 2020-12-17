@@ -26,10 +26,11 @@ public class JoinDemo {
                 try {
                     /*t1调用join方法,t2会等待t1运行完之后才会开始执行后续代码*/
                     t1.join();
+                    System.out.println("t2 is running");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    System.out.println("t2 is running");
+//                    System.out.println("t2 is running");
                 }
             }
         });
@@ -41,10 +42,11 @@ public class JoinDemo {
                 try {
                     /*t2调用join方法,t3会等待t2运行完之后才会开始执行后续代码*/
                     t2.join();
+                    System.out.println("t3 is running");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
-                    System.out.println("t3 is running");
+//                    System.out.println("t3 is running");
                 }
             }
         });

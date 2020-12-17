@@ -35,6 +35,7 @@ public class Main {
         new MyThread().start();
         /*======方式二：实现Runable接口 ------ Runable是Java对任务（业务逻辑）的抽象*/
         new Thread(new RunnableImpl()).start();
+        new RunnableImpl().run();
         //FutureTask--->RunnableFuture--->Runnable --- 使用Callable这种方式最终还是通过Runnable的方式
         FutureTask<String> stringFutureTask = new FutureTask<>(new Callable<String>() {
             @Override
@@ -49,6 +50,12 @@ public class Main {
     static class MyThread extends Thread {
         @Override
         public void run() {
+            try {
+                /*当线程不需要获取锁的时候，调用wait()会报IllegalMonitorStateException异常*/
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             super.run();
             System.out.println("继承Thread --- 子线程的名字" + Thread.currentThread().getName());
             System.out.println("I inherited Thread~");

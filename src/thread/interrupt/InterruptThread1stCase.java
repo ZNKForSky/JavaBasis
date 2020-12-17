@@ -9,8 +9,8 @@ public class InterruptThread1stCase {
     public static void main(String[] args) throws InterruptedException {
         UserThread endThread = new UserThread("EndThread");
         endThread.start();
-        /*休眠2秒之后，中断子线程*/
-        Thread.sleep(2000);
+        /*休眠20毫秒之后，中断子线程*/
+        Thread.sleep(20);
         /*设置线程中断，其实只是设置线程中断标志位  Just to set the interrupt flag*/
         endThread.interrupt();
         /*stop方法过于蛮横，不用它*/
@@ -47,7 +47,7 @@ public class InterruptThread1stCase {
                 System.out.println(threadName + " is running~");
                 System.out.println(threadName + " inner interrupt flag is " + isInterrupted());
             }
-//            System.out.println(threadName + " outer interrupt flag is " + isInterrupted());
+            System.out.println(threadName + " outer interrupt flag is " + isInterrupted());
         }
     }
 }
