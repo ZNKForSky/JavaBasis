@@ -1,6 +1,6 @@
 package thread.cas;
 
-import thread.sync.SleepTools;
+import tools.SleepTools;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

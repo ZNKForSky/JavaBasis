@@ -1,4 +1,4 @@
-package thread.sync;
+package tools;
 
 import java.util.concurrent.TimeUnit;
 

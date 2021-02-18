@@ -1,5 +1,7 @@
 package thread.sync;
 
+import tools.SleepTools;
+
 /**
  * 类锁和锁static变量是不同的
  */

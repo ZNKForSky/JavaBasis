@@ -1,7 +1,7 @@
 package thread.threadlocal;
 
 
-import thread.sync.SleepTools;
+import tools.SleepTools;
 
 /**
  * 类说明：ThreadLocal的线程不安全演示

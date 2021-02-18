@@ -1,7 +1,5 @@
 package thread.deadlock;
 
-import java.util.Random;
-
 /**
  * ======================================================================================
  * 活锁例子
@@ -20,6 +18,13 @@ public class LiveLock {
         /*勺子的拥有者*/
         Diner owner;
 
+        /*被拥有者让给别人的次数*/
+        public transient int count = 0;
+
+        Spoon(Diner diner) {
+            this.owner = diner;
+        }
+
         /**
          * 获取勺子拥有者
          */
@@ -36,9 +41,24 @@ public class LiveLock {
             this.owner = diner;
         }
 
-        Spoon(Diner diner) {
-            this.owner = diner;
+        /**
+         * 获取谦让次数
+         *
+         * @return 谦让次数
+         */
+        public int getCount() {
+            return count;
         }
+
+        /**
+         * 设置谦让次数
+         *
+         * @param count 谦让次数
+         */
+        public void setCount(int count) {
+            this.count = count;
+        }
+
 
         /**
          * 表示正在用餐
@@ -81,6 +101,16 @@ public class LiveLock {
             try {
                 synchronized (sharedSpoon) {
                     while (isHungry) {
+                        if (sharedSpoon.count >= 2) {
+                            //用餐
+                            System.out.println("谦让次数超限用餐中---------------");
+                            sharedSpoon.use();
+                            sharedSpoon.setOwner(spouse);
+                            isHungry = false;
+                            sharedSpoon.notifyAll();
+                            Thread.currentThread().stop();
+                            break;
+                        }
                         /*当勺子拥有者和用餐者不是同一个人，则进行等待*/
                         while (!sharedSpoon.getOwnerName().equals(name)) {
                             sharedSpoon.wait();
@@ -89,6 +119,8 @@ public class LiveLock {
                         if (spouse.isHungry) {
                             System.out.println("I am " + name + ", and my " + spouse.getName() + " is hungry, I should give it to him(her).\n");
                             sharedSpoon.setOwner(spouse);
+                            sharedSpoon.count++;
+                            System.out.println("谦让次数： " + sharedSpoon.count);
                             sharedSpoon.notifyAll();
                         } else {
                             //用餐
@@ -118,13 +150,8 @@ public class LiveLock {
         Thread h = new Thread() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(new Random().nextInt(6));
-                    /*表示和妻子用餐，这个过程判断妻子是否饿了，如果是，则会把勺子分给妻子，并通知她*/
-                    husband.eatWith(wife, sharedSpoon);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                /*表示和妻子用餐，这个过程判断妻子是否饿了，如果是，则会把勺子分给妻子，并通知她*/
+                husband.eatWith(wife, sharedSpoon);
             }
         };
         h.start();
@@ -133,32 +160,26 @@ public class LiveLock {
         Thread w = new Thread() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(new Random().nextInt(6));
-                    /*表示和妻子用餐，这个过程判断丈夫是否饿了，如果是，则会把勺子分给丈夫，并通知他*/
-                    wife.eatWith(husband, sharedSpoon);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                /*表示和妻子用餐，这个过程判断丈夫是否饿了，如果是，则会把勺子分给丈夫，并通知他*/
+                wife.eatWith(husband, sharedSpoon);
             }
         };
         w.start();
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        h.interrupt();
-        w.interrupt();
+//        h.interrupt();
+//        w.interrupt();
 
-        try {
-            /*join()方法阻塞调用此方法的线程(calling thread)，直到线程t完成，此线程再继续；通常用于在main()主线程内，等待其它线程完成再结束main()主线程。*/
-            h.join();
-            w.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            /*join()方法阻塞调用此方法的线程(calling thread)，直到线程t完成，此线程再继续；通常用于在main()主线程内，等待其它线程完成再结束main()主线程。*/
+//            h.join();
+//            w.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 }
-
