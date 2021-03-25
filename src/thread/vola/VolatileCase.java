@@ -1,6 +1,6 @@
 package thread.vola;
 
-import thread.sync.SleepTools;
+import tools.SleepTools;
 
 /**
  * 演示Volatile的提供的可见性

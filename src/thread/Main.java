@@ -69,4 +69,106 @@ public class Main {
             System.out.println("I implement Runable~");
         }
     }
+
+/**
+ * 公平锁的lock方法
+ */
+//final void lock() {
+//    acquire(1);
+//}
+
+/**
+ * AQS中的acquire(int)方法
+ *
+ * @param arg 公平锁传的值为1，后面我就直接以 1对待，不再赘述
+ */
+//public final void acquire(int arg) {
+//    if (!tryAcquire(arg) &&
+//            acquireQueued(addWaiter(AbstractQueuedSynchronizer.Node.EXCLUSIVE), arg))
+//        /*当前线程自行中断*/
+//        selfInterrupt();
+//}
+
+/**
+ * 回调 ReentrantLock.FairSync的 tryAcquire(int)方法
+ *
+ * @param acquires
+ * @return
+ */
+//protected final boolean tryAcquire(int acquires) {
+//    /*获取当前线程*/
+//    final Thread current = Thread.currentThread();
+//    /*获取同步状态，也就是锁被获取的次数*/
+//    int c = getState();
+//    /*如果锁被获取到的次数为0，即此时没有线程持锁*/
+//    if (c == 0) {
+//        /*查询是否有任何线程在等待获取比当前线程更长的时间，也就是当前线程是否位于队列的第一位。*/
+//        if (!hasQueuedPredecessors() &&
+//                /*如果使用CAS把锁的状态成功改为1，则返回true*/
+//                compareAndSetState(0, acquires)) {
+//            /*设置当前线程为独占模式同步的当前所有者，即当前线程拿到锁*/
+//            setExclusiveOwnerThread(current);
+//            return true;
+//        }
+//    }
+//    /*如果当前线程已经是持锁线程*/
+//    else if (current == getExclusiveOwnerThread()) {
+//        /*持锁次数加1*/
+//        int nextc = c + acquires;
+//        if (nextc < 0)
+//            throw new Error("Maximum lock count exceeded");
+//        /*更新同步状态*/
+//        setState(nextc);
+//        return true;
+//    }
+//    return false;
+//}
+
+/**
+ * 执行不公平的tryLock。 tryAcquire是在子类中实现的，但是都需要对trylock方法进行不公平的尝试。
+ * https://www.cnblogs.com/aspirant/p/8657681.html
+ */
+//final boolean nonfairTryAcquire(int acquires) {
+//    final Thread current = Thread.currentThread();
+//    /*获取同步状态，也就是锁被获取的次数*/
+//    int c = getState();
+//    if (c == 0) {
+//        /*如果锁被获取的次数是0，则使用CAS把锁的状态改为 acquires*/
+//        if (compareAndSetState(0, acquires)) {
+//            /*拿锁成功，设置当前线程为独占模式同步的当前所有者，即表明当前线程持锁。*/
+//            setExclusiveOwnerThread(current);
+//            return true;
+//        }
+//    } else if (current == getExclusiveOwnerThread()) {
+//        int nextc = c + acquires;
+//        if (nextc < 0) // overflow
+//            throw new Error("Maximum lock count exceeded");
+//        setState(nextc);
+//        return true;
+//    }
+//    return false;
+//}
+
+//protected final boolean tryRelease(int releases) {
+//    int c = getState() - releases;
+//    if (Thread.currentThread() != getExclusiveOwnerThread())
+//        throw new IllegalMonitorStateException();
+//    boolean free = false;
+//    if (c == 0) {
+//        /*当锁被获取的次数为0时，锁才真正被释放*/
+//        free = true;
+//        setExclusiveOwnerThread(null);
+//    }
+//    setState(c);
+//    return free;
+//}
+
+/**
+ * 使用给定的公平性策略创建{@code ReentrantLock}的实例。
+ *
+ * @param fair 如果是true，创建公平锁；否则创建非公平锁。
+ */
+//public ReentrantLock(boolean fair) {
+//    sync = fair ? new ReentrantLock.FairSync() : new ReentrantLock.NonfairSync();
+//}
 }
